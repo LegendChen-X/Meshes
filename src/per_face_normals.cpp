@@ -6,8 +6,7 @@ void per_face_normals(
   const Eigen::MatrixXi & F,
   Eigen::MatrixXd & N)
 {
-  ////////////////////////////////////////////////////////////////////////////
-  // Replace with your code:
-  N = Eigen::MatrixXd::Zero(F.rows(),3);
-  ////////////////////////////////////////////////////////////////////////////
+    N = Eigen::MatrixXd::Zero(F.rows(),3);
+    for(int i=0;i<F.rows();++i)
+        N.row(i) = triangle_area_normal(V.row(F(i, 0)), V.row(F(i, 1)), V.row(F(i, 2)));
 }

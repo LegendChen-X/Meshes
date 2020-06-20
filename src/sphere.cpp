@@ -51,9 +51,10 @@ void sphere(
         for(int j=0;j<num_faces_v;++j)
         {
             int v_1 = i*(num_faces_v+1)+j;
-            int v_2 = (i+1)*(num_faces_v+1)+j;
-            int v_3 = v_2+1;
-            int v_4 = v_1+1;
+            int v_2 = v_1+1;
+            int v_3 = (i+1)*(num_faces_v+1)+j;
+            int v_4 = v_3+1;
+
             F.row(index) = Eigen::RowVector4i(v_1,v_2,v_3,v_4);
             UF.row(index) = Eigen::RowVector4i(v_1,v_2,v_3,v_4);
             NF.row(index) = Eigen::RowVector4i(v_1,v_2,v_3,v_4);

@@ -49,6 +49,7 @@ bool write_obj(
             fp<<" "<<F(i,j)+1<<"/"<<UF(i,j)+1<<"/"<<NF(i,j)+1<<" ";
         fp<<"\n";
     }
+    
     fp.close();
     
     return true;

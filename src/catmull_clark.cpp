@@ -69,23 +69,6 @@ void catmull_clark(
         {
             std::vector<Eigen::RowVector3d> new_vertice;
             
-            Eigen::RowVector3d P = V.row(F(i,j));
-            
-            Eigen::RowVector3d F_buff(0,0,0);
-            for(int l=0;i<face_map[F(i,j)].size();++l)
-                F_buff += point_map[face_map[F(i,j)][l]];
-            F_buff = F_buff / face_map[F(i,j)].size();
-            
-            Eigen::RowVector3d R(0,0,0);
-            for(int l=0;l<vertice_map[F(i,j)].size();++l)
-               R += (P + V.row(vertice_map[F(i,j)][l])) / 2.0;
-            R = R / vertice_map[F(i,j)].size();
-            
-            double n = face_map[F(i,j)].size();
-            Eigen::RowVector3d barycenter = (F_buff + 2.0 * R + (n-3) * P) / n;
-            
-            new_vertice.push_back(barycenter);
-            
             Eigen::RowVector3d new_point(0,0,0);
             std::string key = std::to_string(F(i,j)) +  " " + std::to_string(F(i,(j+1)%F.cols()));
             for(int l=0;i<edge_map[key].size();++l)
@@ -102,6 +85,23 @@ void catmull_clark(
             new_point_1 = (new_point_1 + V.row(F(i,j)) + V.row(F(i,((j-1)+F.cols())%F.cols()))) / 4.0;
             
             new_vertice.push_back(new_point_1);
+            
+            Eigen::RowVector3d P = V.row(F(i,j));
+            
+            Eigen::RowVector3d F_buff(0,0,0);
+            for(int l=0;i<face_map[F(i,j)].size();++l)
+                F_buff += point_map[face_map[F(i,j)][l]];
+            F_buff = F_buff / face_map[F(i,j)].size();
+            
+            Eigen::RowVector3d R(0,0,0);
+            for(int l=0;l<vertice_map[F(i,j)].size();++l)
+               R += (P + V.row(vertice_map[F(i,j)][l])) / 2.0;
+            R = R / vertice_map[F(i,j)].size();
+            
+            double n = face_map[F(i,j)].size();
+            Eigen::RowVector3d barycenter = (F_buff + 2.0 * R + (n-3) * P) / n;
+            
+            new_vertice.push_back(barycenter);
             
             Eigen::RowVector4i newF(-1,-1,-1,-1);
             int index = 0;

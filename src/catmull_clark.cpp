@@ -25,6 +25,9 @@ void catmull_clark(
 {
     if(!num_iters) return;
     
+    std::unordered_map<int, Eigen::RowVector3d> point_map;
+    for(int i=0;i<F.rows();++i)
+        point_map[i] = (V.row(F(i,0))+V.row(F(i,1))+V.row(F(i,2))+V.row(F(i,3)))/4.0;
     
     std::unordered_map<int,std::vector<int>> face_map;
     for(int i=0;i<F.rows();++i)
@@ -57,10 +60,6 @@ void catmull_clark(
         }
     }
     
-    std::unordered_map<int, Eigen::RowVector3d> point_map;
-    for(int i=0;i<F.rows();++i)
-        point_map[i] = (V.row(F(i,0))+V.row(F(i,1))+V.row(F(i,2))+V.row(F(i,3)))/4.0;
-    
     SV = V;
     SF = F;
     
@@ -72,10 +71,10 @@ void catmull_clark(
             
             Eigen::RowVector3d P = V.row(F(i,j));
             
-            Eigen::RowVector3d F(0,0,0);
+            Eigen::RowVector3d F_buff(0,0,0);
             for(int l=0;i<face_map[F(i,j)].size();++l)
-                F += point_map[face_map[F(i,j)][l]];
-            F = F / face_map[F(i,j)].size();
+                F_buff += point_map[face_map[F(i,j)][l]];
+            F_buff = F_buff / face_map[F(i,j)].size();
             
             Eigen::RowVector3d R(0,0,0);
             for(int l=0;l<vertice_map[F(i,j)].size();++l)
@@ -83,7 +82,7 @@ void catmull_clark(
             R = R / vertice_map[F(i,j)].size();
             
             double n = face_map[F(i,j)].size();
-            Eigen::RowVector3d barycenter = (F + 2.0 * R + (n-3) * P) / n;
+            Eigen::RowVector3d barycenter = (F_buff + 2.0 * R + (n-3) * P) / n;
             
             new_vertice.push_back(barycenter);
             
@@ -104,29 +103,28 @@ void catmull_clark(
             
             new_vertice.push_back(new_point_1);
             
-            Eigen::RowVector4i new_F(-1,-1,-1,-1);
+            Eigen::RowVector4i newF(-1,-1,-1,-1);
             int index = 0;
             for(int i=0;i<new_vertice.size();++i)
             {
                 for(int j=0;j<SV.rows();++j)
                     if((new_vertice.at(i)).isApprox(SV.row(j)))
-                        new_F(index) = j;
-                if(new_F[index]==-1)
+                        newF(index) = j;
+                if(newF[index]==-1)
                 {
-                    Eigen::MatrixXd new_SV = Eigen::MatrixXd::Zero(SV.rows()+1,3);
-                    new_SV.topRows(SV.rows()) = SV;
-                    new_SV.bottomRows(1) = new_vertice.at(i);
-                    SV = new_SV;
-                    new_F(index) = SV.rows()-1;
+                    Eigen::MatrixXd newSV = Eigen::MatrixXd::Zero(SV.rows()+1,3);
+                    newSV.topRows(SV.rows()) = SV;
+                    newSV.bottomRows(1) = new_vertice.at(i);
+                    SV = newSV;
+                    newF(index) = SV.rows()-1;
                 }
                 index += 1;
             }
             
-            Eigen::MatrixXi new_SF = Eigen::MatrixXi::Zero(SF.rows()+1,4);
-            new_SF.topRows(SF.rows()) = SF;
-            new_SF.bottomRows(1) = new_F;
-            SF = new_SF;
-            
+            Eigen::MatrixXi newSF = Eigen::MatrixXi::Zero(SF.rows()+1,4);
+            newSF.topRows(SF.rows()) = SF;
+            newSF.bottomRows(1) = newF;
+            SF = newSF;
         }
     }
     catmull_clark(Eigen::MatrixXd(SV),Eigen::MatrixXi(SF),num_iters-1,SV,SF);

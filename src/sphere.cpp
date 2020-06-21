@@ -18,7 +18,7 @@ void sphere(
     UV.resize(total_v,2);
     UF.resize(total_f,4);
     NV.resize(total_v,3);
-    Nf.resize(total_f,4);
+    NF.resize(total_f,4);
     
     double alpha = 2.0 * M_PI / num_faces_u;
     double beta = M_PI / num_faces_v;

@@ -16,8 +16,6 @@ void remove_duplicate(std::vector<int> & v)
     v.erase(end,v.end());
 }
 
-void barycenter
-
 void catmull_clark(
   const Eigen::MatrixXd & V,
   const Eigen::MatrixXi & F,
@@ -75,14 +73,14 @@ void catmull_clark(
             Eigen::RowVector3d P = V.row(F(i,j));
             
             Eigen::RowVector3d F(0,0,0);
-            for(int l=0;i<face_map[F(i,j)].size();++,)
+            for(int l=0;i<face_map[F(i,j)].size();++l)
                 F += point_map[face_map[F(i,j)][l]];
             F = F / face_map[F(i,j)].size();
             
             Eigen::RowVector3d R(0,0,0);
             for(int l=0;l<vertice_map[F(i,j)].size();++l)
                R += (P + V.row(vertice_map[F(i,j)][l])) / 2.0;
-            R = R / adjcent_vertices[F(i,j)].size();
+            R = R / vertice_map[F(i,j)].size();
             
             double n = face_map[F(i,j)].size();
             Eigen::RowVector3d barycenter = (F + 2.0 * R + (n-3) * P) / n;
@@ -99,7 +97,7 @@ void catmull_clark(
             new_vertice.push_back(point_map[i]);
             
             Eigen::RowVector3d new_point_1(0,0,0);
-            std::string key = std::to_string(F(i,j)) +  " " + std::to_string(F(i,((j-1)+F.cols())%F.cols()));
+            key = std::to_string(F(i,j)) +  " " + std::to_string(F(i,((j-1)+F.cols())%F.cols()));
             for(int l=0;i<edge_map[key].size();++l)
                 new_point_1 += point_map[edge_map[key][l]];
             new_point_1 = (new_point_1 + V.row(F(i,j)) + V.row(F(i,((j-1)+F.cols())%F.cols()))) / 4.0;
@@ -112,14 +110,14 @@ void catmull_clark(
             {
                 for(int j=0;j<SV.rows();++j)
                     if((new_vertice.at(i)).isApprox(SV.row(j)))
-                        new_F = j;
+                        new_F(index) = j;
                 if(new_F[index]==-1)
                 {
                     Eigen::MatrixXd new_SV = Eigen::MatrixXd::Zero(SV.rows()+1,3);
                     new_SV.topRows(SV.rows()) = SV;
                     new_SV.bottomRows(1) = new_vertice.at(i);
                     SV = new_SV;
-                    new_F(fi) = SV.rows()-1;
+                    new_F(index) = SV.rows()-1;
                 }
                 index += 1;
             }
@@ -131,5 +129,5 @@ void catmull_clark(
             
         }
     }
-    catmull_clark(Eigen::MatrixXd(SV),Eigen::MatrixXi(SF),num_iters-1,SV,SF);    
+    catmull_clark(Eigen::MatrixXd(SV),Eigen::MatrixXi(SF),num_iters-1,SV,SF);
 }

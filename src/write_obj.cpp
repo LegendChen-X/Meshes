@@ -21,12 +21,12 @@ bool write_obj(
     for(int i=0;i<V.rows();++i)
     {
         fp<<"v";
-        for(int j=0;j<3:++j)
+        for(int j=0;j<3;++j)
             fp<<" "<<V(i,j);
         fp<<"\n";
     }
     
-    for(int i=0;i<UV.rows;++i)
+    for(int i=0;i<UV.rows();++i)
     {
         fp<<"vt";
         for(int j=0;j<2;++j)

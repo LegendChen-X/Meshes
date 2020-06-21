@@ -3,7 +3,7 @@
 // Hint:
 #include "vertex_triangle_adjacency.h"
 #include <iostream>
-#define DEBUG 1
+#define DEBUG 0
 
 void per_corner_normals(
   const Eigen::MatrixXd & V,

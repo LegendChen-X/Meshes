@@ -34,13 +34,12 @@ void sphere(
             double z = cos(beta*j);
             
             V.row(index) = Eigen::Vector3d(x,y,z);
+            NV.row(index) = Eigen::Vector3d(x,y,z);
             
             double p_x = (double) i / (double) (num_faces_u+1);
             double p_y = (double) j / (double) (num_faces_v+1);
             UV.row(index) = Eigen::Vector2d(p_x,p_y);
-            
-            NV.row(index) = Eigen::Vector3d(x,y,z);
-            
+
             index += 1;
         }
     }

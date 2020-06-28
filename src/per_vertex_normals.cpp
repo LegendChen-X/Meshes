@@ -7,23 +7,15 @@ void per_vertex_normals(
   Eigen::MatrixXd & N)
 {
     N = Eigen::MatrixXd::Zero(V.rows(),3);
-    double y = 0;
-    for(int i=0;i<V.rows();++i)
+    
+    for(int i=0;i<F.rows();++i)
     {
-        for(int j=0;j<F.rows();++j)
-        {
-            Eigen::RowVector3d x(0,0,0);
-            for(int l=0;l<F.cols();++l)
-            {
-                if(F(j,l) == i)
-                {
-                    Eigen::RowVector3d buff = triangle_area_normal(V.row(F(j,0)),V.row(F(j,1)),V.row(F(j,2)));
-                    x += buff;
-                    y += (double)buff.norm();
-                    N.row(i) = (x/y).normalized();
-                }
-            }
-            y = 0;
-        }
+        Eigen::RowVector3d norm = triangle_area_normal(V.row(F(i, 0)),V.row(F(i, 1)),V.row(F(i, 2)));
+        
+        for(int j=0;j<3;++j)
+            N.row(F(i,j)) += norm;
     }
+    
+    for(int i=0;i<N.rows();++i)
+        N.row(i) = N.row(i).normalized();
 }

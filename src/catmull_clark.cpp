@@ -8,12 +8,12 @@
 
 //https://en.wikipedia.org/wiki/Catmull%E2%80%93Clark_subdivision_surface
 
-void remove_duplicate(std::vector<int> & v)
+void remove_duplicate(std::vector<int> & x)
 {
-    std::vector<int>::iterator end = v.end();
-    for(std::vector<int>::iterator i = v.begin();i!=end;++i)
+    std::vector<int>::iterator end = x.end();
+    for(std::vector<int>::iterator i = x.begin();i!=end;++i)
         end = std::remove(i+1,end,*i);
-    v.erase(end,v.end());
+    x.erase(end,x.end());
 }
 
 void catmull_clark(
@@ -113,8 +113,8 @@ void catmull_clark(
                 if(newF[index]==-1)
                 {
                     Eigen::MatrixXd newSV = Eigen::MatrixXd::Zero(SV.rows()+1,3);
-                    newSV.topRows(SV.rows()) = SV;
                     newSV.bottomRows(1) = new_vertice.at(i);
+                    newSV.topRows(SV.rows()) = SV;
                     SV = newSV;
                     newF(index) = SV.rows()-1;
                 }
@@ -122,8 +122,8 @@ void catmull_clark(
             }
             
             Eigen::MatrixXi newSF = Eigen::MatrixXi::Zero(SF.rows()+1,4);
-            newSF.topRows(SF.rows()) = SF;
             newSF.bottomRows(1) = newF;
+            newSF.topRows(SF.rows()) = SF;
             SF = newSF;
         }
     }
